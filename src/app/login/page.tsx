@@ -7,7 +7,9 @@ import { Button } from "primereact/button";
 import { useApi } from "../hooks/GlobalContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { API_CONST } from "../constants/api.constant";
-const Login = () => {
+import { Suspense } from "react";
+
+const SuspenseLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,8 +29,6 @@ const Login = () => {
   }, [unauthorized]);
 
   function submitForm() {
-    console.log(process.env.baseUrl);
-    
     if (email && password) {
       commonApiCall({
         endPoint: API_CONST.LOGIN,
@@ -42,7 +42,6 @@ const Login = () => {
         },
       })
         .then((data: any) => {
-          localStorage.setItem("userData", JSON.stringify(data.userData));
           toastRef.show({
             severity: "success",
             summary: "success",
@@ -225,4 +224,11 @@ const Login = () => {
     </div>
   );
 };
-export default Login;
+
+export default function Login() {
+  return (
+    <Suspense>
+      <SuspenseLogin />
+    </Suspense>
+  );
+}

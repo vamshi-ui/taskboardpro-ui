@@ -17,6 +17,8 @@ import GlobalContext, { useApi } from "../hooks/GlobalContext";
 import { API_CONST } from "../constants/api.constant";
 import { Createtask } from "../layout/Createtask";
 import { ConfirmDialog } from "primereact/confirmdialog";
+import { usePathname, useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 
 const StatusIcon = ({ status }: { status: string }) => {
   const iconMap = {
@@ -140,6 +142,26 @@ const Tasks: React.FC = () => {
     totalPages: 0,
     totalTasks: 0,
   });
+
+    const router = useRouter();
+    const pathname = usePathname();
+  
+    useEffect(() => {
+      if (pathname === "/login") return;
+  
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("auth-key="))
+        ?.split("=")[1];
+      if (token) {
+        const decoded : any= jwtDecode(token);
+        if (!decoded.isEmailVerified || !decoded.isActive) {
+          router.push("/login?unauthorized=true");
+        }
+      } else {
+        router.push("/login?unauthorized=true");
+      }
+    }, [router, pathname]);
 
   const fetchTasks = async (payload: any) => {
     try {

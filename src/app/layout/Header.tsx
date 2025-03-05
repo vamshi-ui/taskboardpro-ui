@@ -1,3 +1,4 @@
+'use client'
 import React, { useRef, useState } from "react";
 import { Search, Plus, Bell, ChevronDown, Menu, LogIn } from "lucide-react";
 import { Createtask } from "./Createtask";
@@ -7,6 +8,7 @@ import { Menu as PrimeMenu } from "primereact/menu";
 import { useRouter } from "next/navigation";
 import { API_CONST } from "../constants/api.constant";
 import { useApi } from "../hooks/GlobalContext";
+import { jwtDecode } from "jwt-decode";
 interface HeaderProps {
   toggleSidebar: () => void;
   isMobile: boolean;
@@ -42,7 +44,6 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isMobile }) => {
         credentials: "include",
       },
     }).then((data) => {
-      localStorage.clear();
       toastRef.show({
         severity: "success",
         summary: "success",
@@ -53,24 +54,27 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isMobile }) => {
   }
 
   function getCookie(cname: any) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(";");
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == " ") {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
+    if (typeof document !== "undefined") {
+      let name = cname + "=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(";");
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == " ") {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
       }
     }
     return "";
   }
+  
   const [visible, setVisible] = useState(false);
   const userName = () => {
-    const userData: string = localStorage.getItem("userData") as string;
-    return JSON.parse(userData)?.userName || null;
+    const userData: any = getCookie("auth-key") ? jwtDecode(getCookie("auth-key")) : {};
+    return userData.userName || null;
   };
 
   return (

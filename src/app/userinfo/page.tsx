@@ -1,9 +1,10 @@
-"use client";
+"use client"
 
 import { format } from "date-fns";
 import { User, Mail, Calendar, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { usePathname, useRouter } from "next/navigation";
 interface IUser {
   userName: string;
   emailId: string;
@@ -14,21 +15,45 @@ interface IUser {
 const UserInfo = () => {
   const [user, setUser] = useState<IUser | null>(null);
 
+  
+      const router = useRouter();
+      const pathname = usePathname();
+    
+      useEffect(() => {
+        if (pathname === "/login") return;
+    
+        const token = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("auth-key="))
+          ?.split("=")[1];
+        if (token) {
+          const decoded : any= jwtDecode(token);
+          if (!decoded.isEmailVerified || !decoded.isActive) {
+            router.push("/login?unauthorized=true");
+          }
+        } else {
+          router.push("/login?unauthorized=true");
+        }
+      }, [router, pathname]);
+
   function getCookie(cname: any) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(";");
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == " ") {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
+    if (typeof document !== "undefined") {
+      let name = cname + "=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(";");
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == " ") {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
       }
     }
     return "";
   }
+  
 
   useEffect(() => {
     const userData: any = getCookie("auth-key") ? jwtDecode(getCookie("auth-key")) : {};
@@ -44,7 +69,7 @@ const UserInfo = () => {
   }
 
   return (
-    <main className="flex-1 flex items-center justify-center p-4 sm:p-2">
+    user.userName && <main className="flex-1 flex items-center justify-center p-4 sm:p-2">
       <div className="w-full max-w-3xl">
         <div className="bg-white shadow-md border border-gray-100 rounded-xl p-8">
           <div className="flex items-center justify-between mb-8">

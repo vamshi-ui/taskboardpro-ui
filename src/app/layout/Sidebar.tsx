@@ -40,7 +40,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         credentials: "include",
       },
     }).then((data) => {
-      localStorage.clear();
       toastRef.show({
         severity: "success",
         summary: "success",

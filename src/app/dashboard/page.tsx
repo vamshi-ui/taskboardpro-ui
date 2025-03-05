@@ -10,6 +10,9 @@ import { API_CONST } from "../constants/api.constant";
 import TagsPage from "../layout/TagsPage";
 import ViewTaskDialog from "../layout/ViewTaskDialog";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 
 export default function Dashboard() {
   const { isTaskUpdated, setIsTaskUpdated }: any = useContext(GlobalContext);
@@ -22,6 +25,26 @@ export default function Dashboard() {
   });
   const [taskList, setTaskList] = useState([]);
   const { commonApiCall, toastRef } = useApi();
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname === "/login") return;
+
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("auth-key="))
+      ?.split("=")[1];
+    if (token) {
+      const decoded : any= jwtDecode(token);
+      if (!decoded.isEmailVerified || !decoded.isActive) {
+        router.push("/login?unauthorized=true");
+      }
+    } else {
+      router.push("/login?unauthorized=true");
+    }
+  }, [router, pathname]);
 
   const dateTemplate = (date: any) => {
     const hasEvent = taskList.find(
