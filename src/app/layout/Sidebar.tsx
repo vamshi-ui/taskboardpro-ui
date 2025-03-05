@@ -13,20 +13,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApi } from "../hooks/GlobalContext";
 import { API_CONST } from "../constants/api.constant";
+import { usePathname } from "next/navigation";
 
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
-  activePage: string;
-  setActivePage: (page: string) => void;
   isMobile: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
   setSidebarOpen,
-  activePage,
-  setActivePage,
   isMobile,
 }) => {
   const { commonApiCall, toastRef } = useApi();
@@ -34,6 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     setSidebarOpen(!sidebarOpen);
   };
   const route = useRouter();
+  
   function logOut() {
     commonApiCall({
       endPoint: API_CONST.LOG_OUT,
@@ -95,19 +93,18 @@ const Sidebar: React.FC<SidebarProps> = ({
         <nav className="px-2 space-y-1">
           {[
             { name: "Home", icon: Home, url: "/" },
-            { name: "Dashboard", icon: LayoutDashboardIcon, url: "dashboard" },
-            { name: "My Tasks", icon: CheckSquare, url: "tasklist" },
-            { name: "Notifications", icon: Calendar, url: "notifications" },
-            { name: "My Info", icon: Users, url: "userinfo" },
+            { name: "Dashboard", icon: LayoutDashboardIcon, url: "/dashboard" },
+            { name: "My Tasks", icon: CheckSquare, url: "/tasklist" },
+            { name: "Notifications", icon: Calendar, url: "/notifications" },
+            { name: "My Info", icon: Users, url: "/userinfo" },
           ].map((item) => (
             <Link href={item.url} key={item.url}>
               <button
                 onClick={() => {
-                  setActivePage(item.url);
                   if (isMobile) setSidebarOpen(false);
                 }}
                 className={`${
-                  activePage === item.url
+                  usePathname() === item.url
                     ? "bg-amber-50 text-amber-800"
                     : "text-gray-600 hover:bg-gray-100"
                 } group flex items-center ${
@@ -118,7 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               >
                 <item.icon
                   className={`${
-                    activePage === item.url
+                    usePathname() === item.url
                       ? "text-amber-600"
                       : "text-gray-500 group-hover:text-gray-600"
                   } ${sidebarOpen ? "mr-3" : ""} h-5 w-5 flex-shrink-0`}

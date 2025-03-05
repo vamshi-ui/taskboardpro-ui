@@ -16,7 +16,6 @@ export default function ClientWrapper({
   const [isTaskUpdated, setIsTaskUpdated] = useState(false);
   const [taskConfig, setTaskConfig] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activePage, setActivePage] = useState("/");
   const [isMobile, setIsMobile] = useState(false);
   const [isLoading, setisLoading] = useState(false);
   const pathname = usePathname();
@@ -63,8 +62,6 @@ export default function ClientWrapper({
             <Sidebar
               sidebarOpen={sidebarOpen}
               setSidebarOpen={setSidebarOpen}
-              activePage={activePage}
-              setActivePage={setActivePage}
               isMobile={isMobile}
             />
 

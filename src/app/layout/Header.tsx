@@ -1,14 +1,72 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Search, Plus, Bell, ChevronDown, Menu, LogIn } from "lucide-react";
 import { Createtask } from "./Createtask";
 import Link from "next/link";
-
+import { OverlayPanel } from "primereact/overlaypanel";
+import { Menu as PrimeMenu } from "primereact/menu";
+import { useRouter } from "next/navigation";
+import { API_CONST } from "../constants/api.constant";
+import { useApi } from "../hooks/GlobalContext";
 interface HeaderProps {
   toggleSidebar: () => void;
   isMobile: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar, isMobile }) => {
+  const op: any = useRef(null);
+  const { commonApiCall, toastRef } = useApi();
+
+  const route = useRouter();
+  let items = [
+    {
+      label: "My Profile",
+      icon: "pi pi-user",
+      command: () => {
+        route.push("/userinfo");
+      },
+    },
+    {
+      label: "Logout",
+      icon: "pi pi-sign-out",
+      command: () => {
+        logOut();
+      },
+    },
+  ];
+
+  function logOut() {
+    commonApiCall({
+      endPoint: API_CONST.LOG_OUT,
+      params: {
+        method: "GET",
+        credentials: "include",
+      },
+    }).then((data) => {
+      localStorage.clear();
+      toastRef.show({
+        severity: "success",
+        summary: "success",
+        detail: data.message,
+      });
+      route.push("/login");
+    });
+  }
+
+  function getCookie(cname: any) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(";");
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == " ") {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
   const [visible, setVisible] = useState(false);
   const userName = () => {
     const userData: string = localStorage.getItem("userData") as string;
@@ -41,7 +99,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isMobile }) => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search for tasks, projects, or team members"
+              placeholder="Search for tasks, categories, or tags"
               className="w-full bg-gray-50 rounded-lg py-2 pl-10 pr-4 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-300 border border-gray-200"
             />
           </div>
@@ -53,17 +111,22 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isMobile }) => {
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
-          <button
-            onClick={() => setVisible(true)}
-            className="bg-amber-500 cursor-pointer p-2 md:px-4 md:py-2 rounded-lg flex items-center gap-1 md:gap-2 transition-all text-sm font-medium shadow-sm"
-          >
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">New Task</span>
-          </button>
+          {getCookie("auth-key") && (
+            <button
+              onClick={() => setVisible(true)}
+              className="bg-amber-500 cursor-pointer p-2 md:px-4 md:py-2 rounded-lg flex items-center gap-1 md:gap-2 transition-all text-sm font-medium shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">New Task</span>
+            </button>
+          )}
 
           <div className="flex items-center">
             {userName() ? (
-              <button className="flex items-center gap-1 md:gap-2 hover:bg-gray-100 p-1 md:p-2 rounded-lg">
+              <button
+                onClick={(e) => op.current.toggle(e)}
+                className="flex items-center gap-1 md:gap-2 hover:bg-gray-100 p-1 md:p-2 rounded-lg"
+              >
                 <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-amber-900 font-bold shadow-sm">
                   {userName().substring(0, 1)}
                 </div>
@@ -80,6 +143,9 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isMobile }) => {
                 </button>
               </Link>
             )}
+            <OverlayPanel ref={op}>
+              <PrimeMenu model={items} />
+            </OverlayPanel>
           </div>
         </div>
       </div>
@@ -98,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isMobile }) => {
       {visible && (
         <Createtask
           onClose={() => {
-            setVisible(false)
+            setVisible(false);
           }}
           visible={visible}
           setVisible={setVisible}

@@ -20,7 +20,7 @@ const NotificationsSoon = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white rounded-lg p-6 shadow-sm">
+          {/* <div className="bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-start gap-4">
               <div className="bg-amber-100 p-2 rounded-full">
                 <Radio className="text-amber-600" />
@@ -52,12 +52,12 @@ const NotificationsSoon = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-start gap-4">
               <div className="bg-amber-100 p-2 rounded-full">
-                <ArrowRight className="text-amber-600" />
+                <Radio className="text-amber-600" />
               </div>
               <div>
                 <h3 className="font-semibold text-lg text-amber-800">

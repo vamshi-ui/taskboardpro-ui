@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { User, Mail, Calendar, Info } from "lucide-react";
 import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 interface IUser {
   userName: string;
   emailId: string;
@@ -13,10 +14,28 @@ interface IUser {
 const UserInfo = () => {
   const [user, setUser] = useState<IUser | null>(null);
 
+  function getCookie(cname: any) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(";");
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == " ") {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
   useEffect(() => {
-    const userData = localStorage.getItem("userData");
+    const userData: any = getCookie("auth-key") ? jwtDecode(getCookie("auth-key")) : {};
+    console.log(userData);
+    
     if (userData) {
-      setUser(JSON.parse(userData));
+      setUser(userData);
     }
   }, []);
 

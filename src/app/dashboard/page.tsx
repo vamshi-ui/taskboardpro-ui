@@ -8,10 +8,14 @@ import Tracking from "../layout/Tracking";
 import GlobalContext, { useApi } from "../hooks/GlobalContext";
 import { API_CONST } from "../constants/api.constant";
 import TagsPage from "../layout/TagsPage";
+import ViewTaskDialog from "../layout/ViewTaskDialog";
+import { format } from "date-fns";
 
 export default function Dashboard() {
   const { isTaskUpdated, setIsTaskUpdated }: any = useContext(GlobalContext);
   const [date, setDate]: any = useState(null);
+  const [taskRes, setTaskRes]: any = useState(null);
+  const [isViewTask, setIsViewTask]: any = useState(false);
   const [month, setMonth] = useState({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
@@ -72,10 +76,16 @@ export default function Dashboard() {
   useEffect(() => {
     if (date) {
       getRecentTasks({ date: new Date(date).toISOString() }).then((res) => {
-        // setTaskList(res.result);
+        setTaskRes(res.result);
+        setIsViewTask(true);
       });
     }
   }, [date]);
+
+  function resetData() {
+    setIsViewTask(false);
+    setTaskRes(null);
+  }
 
   return (
     <>
@@ -124,6 +134,15 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {isViewTask && (
+        <ViewTaskDialog
+        header={`Tasks of selected date ${format(new Date(date), "dd MMM yyyy, hh:mm a")}`}
+          taskRes={taskRes}
+          visible={isViewTask}
+          resetData={resetData}
+        />
+      )}
     </>
   );
 }

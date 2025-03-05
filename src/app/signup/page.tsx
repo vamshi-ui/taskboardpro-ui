@@ -173,7 +173,6 @@ const Signup = () => {
                   id="terms"
                   name="terms"
                   type="checkbox"
-                  required
                   className="h-4 w-4 text-amber-500 focus:ring-amber-300 border-gray-300 rounded"
                 />
                 <label
@@ -197,7 +196,7 @@ const Signup = () => {
                 </label>
               </div>
               <Button
-                type="submit"
+                type="button"
                 onClick={() => {
                   submitForm();
                 }}

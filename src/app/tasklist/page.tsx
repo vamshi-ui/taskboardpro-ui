@@ -28,34 +28,6 @@ const StatusIcon = ({ status }: { status: string }) => {
   return iconMap[status as keyof typeof iconMap] || null;
 };
 
-const TaskFilters = ({
-  filterStatus,
-  onFilterChange,
-}: {
-  filterStatus: string | null;
-  onFilterChange: (status: string | null) => void;
-}) => (
-  <div className="mb-6 flex flex-wrap gap-2">
-    <Button
-      outlined={filterStatus !== null}
-      onClick={() => onFilterChange(null)}
-    >
-      All
-    </Button>
-    <Button
-      outlined={filterStatus !== "pending"}
-      onClick={() => onFilterChange("pending")}
-    >
-      <AlertCircle className="h-4 w-4 mr-2" /> Pending
-    </Button>
-    <Button
-      outlined={filterStatus !== "completed"}
-      onClick={() => onFilterChange("completed")}
-    >
-      <CheckCircle className="h-4 w-4 mr-2" /> Completed
-    </Button>
-  </div>
-);
 
 const TaskHeader = ({ taskCount }: { taskCount: number }) => (
   <div className="bg-amber-50 p-3 flex justify-between items-center border-b border-amber-200">
