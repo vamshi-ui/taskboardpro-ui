@@ -9,7 +9,7 @@ export const useApi = () => {
     try {
       console.log(process.env.NEXT_PUBLIC_BASE_URL, process.env);
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${endPoint}`, params);
+      const response = await fetch(`https://taskboardpro.codebyvamshi.in/${endPoint}`, params);
 
       if (!response.ok) {
         const error = await response.json();
