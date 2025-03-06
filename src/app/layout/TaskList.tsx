@@ -53,7 +53,7 @@ const TaskList: React.FC = () => {
 
   async function updateTask(payload: any) {
     const res = await commonApiCall({
-      endPoint: `${API_CONST.UPDATE_TASK}/${payload._id}`,
+      endPoint: `${API_CONST.UPDATE_TASK}`,
       params: {
         method: "PUT",
         credentials: "include",

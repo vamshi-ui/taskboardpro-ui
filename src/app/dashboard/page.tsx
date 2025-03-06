@@ -98,7 +98,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (date) {
-      getRecentTasks({ date: new Date(date).toISOString() }).then((res) => {
+      getRecentTasks({ date:format(new Date(date), 'yyyy-MM-dd') }).then((res) => {
         setTaskRes(res.result);
         setIsViewTask(true);
       });

@@ -76,6 +76,8 @@ const ActionButtons = ({ task }: { task: Task }) => {
   const { taskConfig, setTaskConfig }: any = useContext(GlobalContext);
   return (
     <>
+    <div className="mx-2">
+
       <Button
         onClick={(e) => {
           {
@@ -88,6 +90,8 @@ const ActionButtons = ({ task }: { task: Task }) => {
         text
         raised
       />
+    </div>
+
       <Button
         onClick={(e) => {
           e.stopPropagation(),
