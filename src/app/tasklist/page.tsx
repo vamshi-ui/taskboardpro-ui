@@ -132,7 +132,6 @@ const Tasks: React.FC = () => {
   const { commonApiCall } = useApi();
   const [selectedTask, setSelectedTask]: any = useState<Task | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const [taskRes, setTaskRes] = useState<{
     totalPages: number;
     message: string;
@@ -304,16 +303,16 @@ const Tasks: React.FC = () => {
         onClose={() => setIsDialogOpen(false)}
       />
 
-      <ConfirmDialog
+     {confirmVisible && <ConfirmDialog
         group="declarative"
         visible={confirmVisible}
-        onHide={() => setConfirmVisible(false)}
+        onHide={() => {setConfirmVisible(false),setTaskConfig(null)}}
         message="Are you sure you want to delete ?"
         header="Confirmation"
         icon="pi pi-exclamation-triangle"
         accept={() => accept()}
-        reject={() => setConfirmVisible(false)}
-      />
+        reject={() => {setConfirmVisible(false),setTaskConfig(null)}}
+      />}
 
       {visible && (
         <Createtask

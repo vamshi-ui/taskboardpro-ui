@@ -8,16 +8,25 @@ export const useApi = () => {
     setisLoading(true);
     try {
       console.log(process.env.NEXT_PUBLIC_BASE_URL, process.env);
-      
-      const response = await fetch(`https://taskboardpro.codebyvamshi.in/${endPoint}`, params);
+
+      const response = await fetch(`http://localhost:4444/${endPoint}`, params);
 
       if (!response.ok) {
+        toastRef.clear()
         const error = await response.json();
-        toastRef.show({
-          severity: "error",
-          summary: "Error",
-          detail: error.message || "Something went wrong!",
-        });
+        if (response.status === 401) {
+          toastRef.show({
+            severity: "warn",
+            summary: "Unauthorized",
+            detail: "Please log in...",
+          });
+        } else {
+          toastRef.show({
+            severity: "error",
+            summary: "Error",
+            detail: error.message || "Something went wrong!",
+          });
+        }
         throw new Error(error.message);
       }
 
